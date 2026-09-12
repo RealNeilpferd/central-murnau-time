@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Central Murnau Time</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #111;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      text-align: center;
+    }
+    h1 { margin: 0 0 18px; font-size: clamp(28px, 7vw, 52px); }
+    #time { font-size: clamp(54px, 15vw, 110px); font-weight: 600; font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Central Murnau Time</h1>
+    <div id="time">--:--:--</div>
+  </main>
+  <script>
+    const clock = document.getElementById('time');
+    const formatter = new Intl.DateTimeFormat('de-DE', {
+      timeZone: 'Europe/London',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    function updateClock() {
+      clock.textContent = formatter.format(new Date());
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
