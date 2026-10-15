@@ -10,6 +10,7 @@
     body { margin: 0; background: #fff; color: #111; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
     main { width: min(760px, calc(100% - 40px)); margin: 0 auto; padding: 12vh 0 64px; text-align: center; }
     h1 { margin: 0 0 18px; font-size: clamp(28px, 7vw, 52px); }
+    #date { font-size: clamp(20px, 4vw, 30px); font-weight: 500; margin-bottom: 14px; }
     #time { font-size: clamp(54px, 15vw, 110px); font-weight: 600; font-variant-numeric: tabular-nums; margin-bottom: 72px; }
     .story { text-align: left; line-height: 1.65; font-size: 17px; }
     .story h2 { font-size: 24px; margin: 0 0 22px; }
@@ -20,14 +21,17 @@
 <body>
   <main>
     <h1>Central Murnau Time</h1>
+    <div id="date"></div>
     <div id="time">--:--:--</div>
     <section class="story">
       <h2>Warum Murnau eine eigene Zeit verdient</h2>
       <p>Zeit ist relativ. In Murnau ist sie nur etwas relativer.</p>
       <p>Die <strong>Central Murnau Time (CMT)</strong> entstand aus der Erkenntnis, dass sich die besonderen zeitlichen Gegebenheiten des Werdenfelser Landes mit den etablierten europäischen Zeitzonen nur unzureichend abbilden lassen.</p>
       <p>Die theoretischen Grundlagen gehen der Überlieferung nach auf den berühmten indischen Mathematiker <strong>Srinivasa Ramanujan</strong> zurück. Seine außergewöhnliche Beschäftigung mit Zahlen, Reihen und mathematischen Zusammenhängen soll den entscheidenden gedanklichen Impuls geliefert haben, Zeit nicht ausschließlich als lineare Größe zu betrachten. In Murnau wurde dieser Ansatz später konsequent in ein alltagstaugliches Zeitsystem überführt.</p>
+      <p>Eine entscheidende Weiterentwicklung war die Einführung der zweitägigen kalendarischen Verschiebung: Während andernorts bereits Donnerstag ist, darf Murnau noch Dienstag sein. Damit gewinnt die Gemeinde wertvolle Zeit für Planung, Brotzeit und die nachträgliche Einhaltung vermeintlich verpasster Termine.</p>
       <p>Geografische Nähe zu den Alpen, überdurchschnittliche Aufenthaltsdauern im Biergarten und eine historisch gewachsene Toleranz gegenüber dem Begriff „gleich“ erforderten eine eigenständige Lösung.</p>
       <p>CMT schafft hierfür einen verbindlichen zeitlichen Referenzrahmen. Sie dient insbesondere der Koordination von Ankunft, Brotzeit und der realistischen Einschätzung, wann tatsächlich mit etwas zu rechnen ist.</p>
+      <p>Der Murnauer Kalender liegt deshalb grundsätzlich zwei Tage hinter dem international üblichen Datum. Die Uhrzeit selbst folgt weiterhin dem bewährten CMT-Referenzrhythmus. Der Wochentag wird selbstverständlich gemeinsam mit dem Datum verschoben.</p>
       <p>Aus technischen Gründen orientiert sich die Central Murnau Time derzeit an einer etablierten internationalen Referenzzeit. Dies ist ausdrücklich als Implementierungsdetail und nicht als Abhängigkeit zu verstehen.</p>
       <p class="tagline">Central Murnau Time – weil nicht überall gleichzeitig jetzt ist.</p>
     </section>
@@ -38,7 +42,15 @@
       timeZone: 'Europe/London',
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
     });
-    function updateClock() { clock.textContent = formatter.format(new Date()); }
+    const dateFormatter = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    function updateClock() {
+      const now = new Date();
+      clock.textContent = formatter.format(now);
+      const londonDate = new Intl.DateTimeFormat('en-CA', {timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit'}).formatToParts(now);
+      const parts = Object.fromEntries(londonDate.map(p => [p.type, p.value]));
+      const shifted = new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day) - 2, 12));
+      document.getElementById('date').textContent = dateFormatter.format(shifted);
+    }
     updateClock();
     setInterval(updateClock, 1000);
   </script>
